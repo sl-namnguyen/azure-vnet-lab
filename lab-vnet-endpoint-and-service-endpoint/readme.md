@@ -94,7 +94,8 @@
 **1. Test mount thử file share test của storage account `sahubeastus01`, `sahubeastus01`**
   - thay các biến trong script
   - Sử dụng 3 scripts để test xem có kết nối tới file share test được không
-  => không thể kết nối tới file share test ở các storage account
+  >**Kết quả:** không thể kết nối tới file share test ở các storage account
+
   > **EXPLAIN:**
     Do `vnet-spoke-01` và `vnet-hub-01` chưa peering đến nhau nên VM `vm-spoke-eastus-01` không thể kết nối đến file share `test` trong các storage account `sahubeastus01`, `sahubeastus01`
 
@@ -111,7 +112,8 @@
       - Traffic forward from remote virtual network: `Allow`
   - mở `vnet-hub-01` > connected devices > note lại ip address của device `pv-sahubeastus01-hub-eastus.nic.<random>` (trong phần device của vnet này chỉ có 1 device thôi)
   - ở trong VM `vm-spoke-eastus-01`, test lại 3 scripts
-  => thấy script `mount-fileshare-sahubeastus01-privateip.ps1`, `mount-fileshare-sahubeastus01.ps1` hoạt động được
+  >**Kết quả:**thấy script `mount-fileshare-sahubeastus01-privateip.ps1`, `mount-fileshare-sahubeastus01.ps1` hoạt động được
+
   > **EXPLAIN:**
     Do `vnet-spoke-01` và `vnet-hub-01` đã peering đến nhau và allow traffic to remote virtual network nên VM `vm-spoke-eastus-01` có thể kết nối đến file share `test` của các storage account
     Đối với script `mount-fileshare-sahubeastus01-privatednszone.ps1` không hoạt động được là vì, VM `vm-spoke-eastus-01` không thể phân giải được ip address của `sahubeastus01.privatelink.file.core.windows.net`
@@ -122,17 +124,20 @@
       - name: `pvl-to-vnet-spoke-01`
       - vnet: `vnet-spoke-01`
   - ở trong VM `vm-spoke-eastus-01`, test lại script `mount-fileshare-sahubeastus01-privatednszone.ps1`
-  => thấy script chạy thành công
+  >**Kết quả:** thấy script chạy thành công
+
   > **EXPLAIN:**
     Do private dns zone đã link tới `vnet-spoke-01`, nên vm `vm-spoke-eastus-01` có thể sử dụng private dns zone này để phân ip address của `sahubeastus01.privatelink.file.core.windows.net`
 
 **4. access vào file share test của storage account `sahubeastus01` ở trên portal azure:**
   - trong portal azure > `sahubeastus01` > file share > test:
-  => sẽ thấy báo lỗi **this machine doesn't seem to have access**
+  >**Kết quả:** sẽ thấy báo lỗi **this machine doesn't seem to have access**
+
   > **EXPLAIN:**
     Do ip address của con máy tính hiện chưa được add vào whitelist của firewall nên không thể access được vào file share test của `sahubeastus01`
   - quay lại `sahubeastus01` > networking > firewall and virtual networks > firewall > tick `Add your client IP address ('public ip address của bạn')`
     đợi 2-3' rồi access lại file share `test`
-  => sẽ thấy access được vào file share `test` của storage account `sahubeastus01`
+  >**Kết quả:** sẽ thấy access được vào file share `test` của storage account `sahubeastus01`
+  
   > **EXPLAIN:**
     Do ip address của bạn đã được whitelist nên có thể access được vào file share `test` của storage account `sahubeastus01`
